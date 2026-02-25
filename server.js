@@ -79,6 +79,41 @@ app.get('/students/:id', async (req, res) => {
   }
 });
 
+app.put('/students/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedStudent = req.body;
+
+    const query = { _id: new ObjectId(id) };
+    const result = await studentCollection.updateOne(query, { $set: updatedStudent });
+
+    if (result.matchedCount > 0) {
+      res.send({ message: 'Student updated successfully' });
+    } else {
+      res.status(404).send({ message: 'Student not found' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Failed to update student', error });
+  }
+});
+
+app.delete('/students/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const query = { _id: new ObjectId(id) };
+    const result = await studentCollection.deleteOne(query);
+
+    if (result.deletedCount > 0) {
+      res.send({ message: 'Student deleted successfully' });
+    } else {
+      res.status(404).send({ message: 'Student not found' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Failed to delete student', error });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('Hello from the server!');
 });
